@@ -1,0 +1,22 @@
+---
+title: 'Metro CDMX: Encontrando la ruta más corta'
+author: "Equipo 3"
+date: "12/3/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+El metro de la Ciudad de México, fundado en 1969 cuenta con una extensión aproximada de 226 km que abarcan incluso una parte del oriente del Estado de México. Es sin duda uno de los sistemas de transporte más concurridos, llegando a superar por momentos la alfuencia de otros metros importantes como lo es el de Moscú o el de Londres. Actualmente y de acuerdo a cifras oficiales el metro cuenta con un total de 12 líneas con 195 estaciones en total dentro de la red. Se tienen 48 estaciones con correspondencia y 123 estaciones de paso. La siguiente figura tomada de la cuenta oficial de twiter de metro de la CDMX muestra la red y cómo se ve actualmente:
+
+
+![Metro de la CDMX](Imagenes/Red_metro_cdmx.png){height="350" width=60% }
+
+Como usuarios del metro, sabemos que actualmente existe un problema de saturación del sistema de transporte colectivo, pues sin lugar a dudas tal vez sigue siendo el sistema de transporte más barato para la pobación en general, pues con 5 pesos es posible cruzar la ciudad de un extremo a otro. Si bien, el presente trabajo no pretende dar una solución al problema de saturación, si tiene por objetivo hacer una recomendación sobre la ruta más corta cuando se quiere viajar de una estación a otra. O bien, como una segunda recomencación, queremos mostrar cuál sería la ruta más comoda en el sentido de que bajo dicha ruta encontrará menos afluencia de personas. Este última recomendación únicamente se basa en el promedio de personas por estación y no analiza otros factores que sin duda son importantes como podría ser las horas pico.
+
+
+
