@@ -34,8 +34,12 @@ Se almacena la distancia más corta encontrada hasta el momento
 Se continua con el siguiente nodo más adjacente, se evalúa la distancia y se actualizan las distancias mínimas en caso de econtrarse una distancia más corta.
 Se repite hasta visitar el nodo más lejano.
 
+
 ### Comentarios: 
 
-+ Es masomenos un algoritmo de fuerza bruta pues tiene que visitar toda la gráfica partiendo de un nodo para conocer la distancia más corta.
-+ Los pesos de las aristas tienen que ser positivos de lo contrario no funciona aunque 
++ Es masomenos un algoritmo de fuerza bruta pues tiene que visitar toda la gráfica (en el peor de los casos) partiendo de un nodo para conocer la distancia más corta.
++ Los pesos de las aristas tienen que ser positivos de lo contrario no funciona aunque podemos resolver esto si hacemos una transformación a los pesos (como multiplicar al cuadrádo o tomar el valor absoluto dependiendo del contexto)
 
+### Fuentes
+https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra
+https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/
