@@ -1,13 +1,35 @@
 ---
 title: 'Metro CDMX: Encontrando la ruta más corta'
-author: "Equipo 3"
-date: "12/3/2022"
-output: pdf_document
+author:   
+- "Jorge García (202945)"
+- "Aline Perez (203145)"
+- "Sandra Thalía España Gómez(203200)"
+- "Marco Ramos (142244)"
+output: 
+  pdf_document:
+    fig_caption: yes
+header-includes:
+  - \renewcommand{\and}{\\}
+  - \renewcommand{\figurename}{Figura}
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+bibliography: referencias.bib
+link-citations: yes
+linkcolor: blue
+csl: apa-numeric-brackets.csl
+nocite: '@*'
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+```
+
 
 ## Introducción
 
@@ -18,28 +40,20 @@ El metro de la Ciudad de México, fundado en 1969 cuenta con una extensión apro
 
 Como usuarios del metro, sabemos que actualmente existe un problema de saturación del sistema de transporte colectivo, pues sin lugar a dudas tal vez sigue siendo el sistema de transporte más barato para la pobación en general, pues con 5 pesos es posible cruzar la ciudad de un extremo a otro. Si bien, el presente trabajo no pretende dar una solución al problema de saturación, si tiene por objetivo hacer una recomendación sobre la ruta más corta cuando se quiere viajar de una estación a otra. O bien, como una segunda recomencación, queremos mostrar cuál sería la ruta más comoda en el sentido de que bajo dicha ruta encontrará menos afluencia de personas. Este última recomendación únicamente se basa en el promedio de personas por estación y no analiza otros factores que sin duda son importantes como podría ser las horas pico.
 
-## Algoritmo: Dijkstra
+## Solución teórica del problema
+
+## Datos
+
+## Implementación del algoritmo 
 
 
-### Contexto:
-
-El algoritmo de Dijkstra sirve para encontrar el camino más corto entre dos nodos de un grafo. Encuentra la distancia más corta entre un nodo particular y todos los demás nodos, creando un "arbol de distancia mas corta". Es de gran utilidad por ejemplo para los casos de redes muy pobladas (piensen en cadenas de suministro, redes sociales etc) y se usa por ejemplo en los GPS.
-
-Como curiosidad, fue inventado por  Dr. Dijkstra durante una cita en la que se preguntaba cuál era la mejor manera de llegar de Rotterdam a Groningen. Además menciona que le tomo diseñarlo 20 minutos y que parte escencial de su exito es su simpleza; menciona que no usó lapiz y pluma, de lo contrario,menciona, se hubiese vuelto innecesariamente más complejo.
-
-### Algoritmo:
-
-Se comienza en el nodo fuente y se va analizando cada distancia a los nodos adyacentes.
-Se almacena la distancia más corta encontrada hasta el momento
-Se continua con el siguiente nodo más adjacente, se evalúa la distancia y se actualizan las distancias mínimas en caso de econtrarse una distancia más corta.
-Se repite hasta visitar el nodo más lejano.
 
 
-### Comentarios: 
 
-+ Es masomenos un algoritmo de fuerza bruta pues tiene que visitar toda la gráfica (en el peor de los casos) partiendo de un nodo para conocer la distancia más corta.
-+ Los pesos de las aristas tienen que ser positivos de lo contrario no funciona aunque podemos resolver esto si hacemos una transformación a los pesos (como multiplicar al cuadrádo o tomar el valor absoluto dependiendo del contexto)
+## Resultados y conclusiones
 
-### Fuentes
-https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra
-https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/
+## Referencias
+
+
+
+
