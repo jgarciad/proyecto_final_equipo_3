@@ -169,6 +169,10 @@ Así que la ruta seleccionada para ir del nodo 0 al nodo 5 será la primera, mar
 
 ## Datos
 
+Para el ejercicio, se obtuvo la base de datos de longitud en metrosentre estaciones del metro de la CDMX (long_interestacion) y la longitud de la estación particular (long_estacion). Los datos originales se pueden consultar en la siguiente [liga](https://metro.cdmx.gob.mx/longitud-de-estacion). 
+
+De la misma manera, se creó una lista con todas las estaciones del metro y se pasó la información de la liga de CDMX a archivo plano para armar la matriz de adyacencias.
+
 ## Implementación del algoritmo 
 
 Para poder plantear una solución al problema, se hizo uso de los algoritmos ya existentes definidos por la comunidad científca. En esta caso, nos basamos en la función _dijkstra_path_ cuya documentación podemos encontrar en [@noauthor_dijkstra_path_nodate]. Dicha función trabaja con redes definidas en python y aplica el mismo principio que se explicó en la sección anterior. 
