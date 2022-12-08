@@ -28,17 +28,25 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidygraph)
 library(ggraph)
+library(readxl)
+library(ggplot2)
 ```
 
 
 ## Introducción
 
-El metro de la Ciudad de México, fundado en 1969 cuenta con una extensión aproximada de 226 km que abarcan incluso una parte del oriente del Estado de México. Es sin duda uno de los sistemas de transporte más concurridos, llegando a superar por momentos la alfuencia de otros metros de ciudades tan pobladas como Moscú o Londres. Actualmente y de acuerdo a cifras oficiales el metro cuenta con un total de 12 líneas con 195 estaciones en total dentro de la red. Se tienen 48 estaciones con correspondencia y 123 estaciones de paso. La siguiente figura tomada de la cuenta oficial de twiter de metro de la CDMX muestra la red y cómo se ve actualmente:
+El metro de la Ciudad de México, fundado en 1969 cuenta con una extensión aproximada de 226 km que abarcan incluso una parte del oriente del Estado de México. Es sin duda uno de los sistemas de transporte más concurridos, llegando a superar por momentos la alfuencia de otros metros importantes como lo es el de Moscú o el de Londres. Actualmente y de acuerdo a cifras oficiales cuenta con un total de 12 líneas y 195 estaciones dentro de la red. Se tienen 48 estaciones con correspondencia y 123 estaciones de paso. La siguiente figura tomada de la cuenta oficial de twiter de metro de la CDMX muestra la red y cómo se ve actualmente:
 
 
 ![Metro de la CDMX](Imagenes/Red_metro_cdmx.png){height="350" width=60% }
 
-Como usuarios del metro, sabemos que actualmente existe un problema de saturación del sistema de transporte colectivo, pues sin lugar a dudas tal vez sigue siendo el sistema de transporte más barato para la pobación en general, pues con 5 pesos es posible cruzar la ciudad de un extremo a otro. Si bien, el presente trabajo no pretende dar una solución al problema de saturación, si tiene por objetivo hacer una recomendación sobre la ruta más corta cuando se quiere viajar de una estación a otra. O bien, como una segunda recomencación, queremos mostrar cuál sería la ruta más comoda en el sentido de que bajo dicha ruta encontrará menos afluencia de personas. Este última recomendación únicamente se basa en el promedio de personas por estación y no analiza otros factores que sin duda son importantes como podría ser las horas pico. Es decir, se plantea dar solución a un problema tan cotidiano como que ruta de metro tomar pero bajo un marco de optimización.
+Como usuarios del metro, sabemos que actualmente existe un problema de saturación, pues sin lugar a dudas tal vez sigue siendo el sistema de transporte más barato para la pobación en general ya que con 5 pesos es posible cruzar la ciudad de un extremo a otro. Si bien, el presente trabajo no pretende dar una solución a dicho problema, si tiene por objetivo hacer tres tipos de recomendaciones para cualquier usuqrio:
+
+1. La primera recomendación se base en sugerir la ruta más corta en distancia en metros
+2. La segunda recomendación se basa en sugerir al usuario la ruta con menos afluencia de personas. Esto con la idea de que el usuario viaje un tanto más cómodo considerando que hay menos cantidad de personas en el viaje sugerido.
+3. La última recomendación se base en una combinación de las dos anteriores y consiste en ponderar la distancia por el nivel de afluencia de personas con el objetivo de sacar una ruta más "óptima" pensando en los dos factores. 
+
+Si bien, esta solución no representa necesariamente una solución universal al los problemas que representa viajar en metro, si es una gran iniciativa en el afán de querer mejorar la movilidad de los usuarios. 
 
 ## Solución teórica del problema
 
@@ -96,7 +104,7 @@ Inicializamos el algoritmo, la siguiente tabla muestra las distancias iniciales 
 | 5| $\infty$|
 | 6| $\infty$|
 
-Note que la distancia inicial en el nodo 0 consigo mismo será 0, mientras que para el resto las distancias iniciales, dado que estas no se conocen se inicializan con el simbolo $\inf$. Por otro lado definimos la lista de los nodos no visitados: $\{0,1,2,3,4,5,6 \}$. Dado que el nodo origen es el nodo 0, lo marcamos como visitado, para ello usarmos el signo "-" dentro de nuestra lista para dentar que hemos visitado dicho nodo: $\{-0,1,2,3,4,5,6 \}$.
+Note que la distancia inicial en el nodo 0 consigo mismo será 0, mientras que para el resto las distancias iniciales, dado que estas no se conocen se inicializan con el simbolo $\infty$. Por otro lado definimos la lista de los nodos no visitados: $\{0,1,2,3,4,5,6 \}$. Dado que el nodo origen es el nodo 0, lo marcamos como visitado, para ello usarmos el signo "-" dentro de nuestra lista para dentar que hemos visitado dicho nodo: $\{-0,1,2,3,4,5,6 \}$.
 
 Ahora, revisamos la distancia que existe entre el nodo 0 y sus nodos adyacentes, que en este caso son 1 y 2. Una ves que hemos revisado las distancias, actualizamos nuestra tabla tal que:
 
@@ -126,11 +134,11 @@ Como ya tenemos la distancia desde el nodo de origen hasta el nodo 2 anotada en 
 | 5| $\infty$|
 | 6| $\infty$|
 
-Note que en este caso, la distancia actualizada será 7 pues es el resultado de la suma de 2 y 5 que es la distancia que nos toma llegar del nodo 0 al nodo 3. Ahora, de los nodos aún no visitados y basados en la tabla anterior debemos elegir el que represente la distancia más corta desde el nodo origen, en este caso la distancia más corta será 6 y marcamos este como visitado tal que $\{-0,-1,-2,3,4,5,6 \}$. Ahora tenemos dos rutas que en este caso son: $\{0 \rightarrow \} y \{0 \rightarrow 2\}$, luego entonces debemos elegir la ruta más corta para llegar al nodo 3. 
+Note que en este caso, la distancia actualizada será 7 pues es el resultado de la suma de 2 y 5 que es la distancia que nos toma llegar del nodo 0 al nodo 3. Ahora, de los nodos aún no visitados y basados en la tabla anterior debemos elegir el que represente la distancia más corta desde el nodo origen, en este caso la distancia más corta será 6 y marcamos este como visitado tal que $\{-0,-1,-2,3,4,5,6 \}$. Ahora tenemos dos rutas que en este caso son: $\{0 \rightarrow 1 \} y \{0 \rightarrow 2\}$, luego entonces debemos elegir la ruta más corta para llegar al nodo 3. 
 
 En nuestra tabla anterior, note que el nodo 3 ya tiene una distancia derivado de los pasos anteriores, pero ahora tenemos una alternativa que será considerar la distancia entre el nodo 2 y 3. Por la figura 2, la suma de estas distancias es de 14, mientras que la distancia ya registrada anteriormete es de 7 como se observa en la tabal, de forma que conservamos la ruta que originalmente habìamos tomado y agregamos el nuevo nodo tal que: $\{0 \rightarrow 1 \rightarrow 3\}$. Hemos llegado al nodo 3, así que ahora podemos marcarlo como visitado: $\{-0,-1,-2,-3,4,5,6 \}$ 
 
-Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visitados, en este caso para ir al nodo 4 la ruta definida sería $\{0 -> 1 \rightarrow 3 \rightarrow 4\}$ cuya distancia es 17, mientras que para ir al nodo 5 la ruta es $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$ y cuya distancia es 22. Actuizamos de nueva cuenta nuestra tabla de distancias:
+Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visitados, en este caso para ir al nodo 4 la ruta definida sería $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4\}$ cuya distancia es 17, mientras que para ir al nodo 5 la ruta es $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$ y cuya distancia es 22. Actualizamos de nueva cuenta nuestra tabla de distancias:
 
 | Nodo| Distancia|
 |:--:|:--:|
@@ -144,7 +152,7 @@ Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visi
 
 Ahora, debemos marcar como visitado aquel nodo que nos haya dado la distancia más corta, que en este caso es el nodo 4: $\{-0,-1,-2,-3,-4,5,6 \}$ y la ruta actualizada será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4\}$. Una vez más repetimos los mismos pasos para el nodo 5 y 6.
 
-Para el nodo 5, la primera opción es seguir la ruta $\{0 -> 1 -> 3 -> 5\}$ que tiene una distancia de 22. La segunda opción será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 5\}$ el cual la distancia será 23 desde el nodo origen, claramente la primera ruta es la más corta. 
+Para el nodo 5, la primera opción es seguir la ruta $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$ que tiene una distancia de 22. La segunda opción será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 5\}$ el cual la distancia será 23 desde el nodo origen, claramente la primera ruta es la más corta. 
 
 Para el nodo 6 la ruta disponible es $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 6\}$ con una distancia de 19. Ahora marcamos como visitado el nodo con la ruta más corta, que en este caso será el 6: $\{-0,-1,-2,-3,-4,5,-6 \}$. Actualizamos la tabla de distancias:
 
@@ -164,14 +172,72 @@ Finalmente, el único nodo no visitado es el nodo 5, veamos como podemos incluir
 2. $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 5\}$ con distancia de 23
 3. $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 6 \rightarrow 5\}$ con distancia de 25
 
-Así que la ruta seleccionada para ir del nodo 0 al nodo 5 será la primera, marcamos este nodo cómo visitado y agregamos esta nueva ruta: $\{-0,-1,-2,-3,-4,-5,-6 \}$, $\{0 -> 1 -> 3 -> 5\}$. Con ello hemos encontrado la ruta más corta desde el nodo origen a cualquier otro nodo dentro de la red. Este mismo principio es el que usaremos para aplicarlo a nuestro porblema, más detalle de ello se puede ver en la sección de implementación del algoritmo. 
+Así que la ruta seleccionada para ir del nodo 0 al nodo 5 será la primera, marcamos este nodo cómo visitado y agregamos esta nueva ruta: $\{-0,-1,-2,-3,-4,-5,-6 \}$, $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$. Con ello hemos encontrado la ruta más corta desde el nodo origen a cualquier otro nodo dentro de la red. Este mismo principio es el que usaremos para aplicarlo a nuestro porblema, más detalle de ello se puede ver en la sección de implementación del algoritmo. 
 
 
 ## Datos
 
-Para el ejercicio, se obtuvo la base de datos de longitud en metrosentre estaciones del metro de la CDMX (long_interestacion) y la longitud de la estación particular (long_estacion). Los datos originales se pueden consultar en la siguiente [liga](https://metro.cdmx.gob.mx/longitud-de-estacion). 
+### Generación Matriz de Adyacencias
 
-De la misma manera, se creó una lista con todas las estaciones del metro y se pasó la información de la liga de CDMX a archivo plano para armar la matriz de adyacencias.
+Para el ejercicio, se descargó la base de datos de la siguiente liga [liga](https://metro.cdmx.gob.mx/longitud-de-estacion), la cual contiene la relación de las distancias en metros entre las estaciones del metro de la CDMX, detallando la línea a la que pertenecen y mostradas de forma ordenada como se muestra a continuación:
+
+```{r message=FALSE, warning=FALSE}
+distancias <-read_excel('C:/Users/palin/OneDrive/Documentos/MaestriaEnCienciaDeDatos/Semestre3/MétodosNuméricos/FinalAline/Data1/distancia_metro.xlsx')
+distancias %>% head(10)
+```
+Para poder generar la matriz de adyacencias, se consideraron como los nodos todas las estaciones (164), y los pesos para cada una el campo "Long_interestacion", que contiene la distancia entre cada estación, esta matriz será simétrica, pues en términos de esta medida es lo mismo ir de Pantitlán a Zaragoza que viceversa. Dado que la matriz es muy grande para ser visualizada, puede consultarse en la carpeta Matrices en el repositorio de GitHub.
+
+En realidad la construcción de esta matriz fue bastante directa y con ella buscamos encontrar la ruta más corta.
+
+### Generación Matriz de Afluencias
+
+Como complemento al modelo original y queriendo responder preguntas como: ¿Que ruta es más cómoda en términos de afluencia de personas?, es decir que pasa si como usuario del metro me interesa más que la ruta más corta la ruta más cómoda en términos del número de personas que la transitan. 
+
+Bajo este enfoque nos interesa agregar la siguiente base tomada de https://datos.cdmx.gob.mx/dataset/afluencia-diaria-del-metro-cdmx , Esta base muestra la afluencia diaria del Metro CDMX. Los datos se encuentran actualizados al 1 de diciembre de 2022 y su profundidad histórica abarca desde enero 2010 al 31 de octubre 2022. 
+
+La base de afluencia desglosada se refiere a la afluencia en el Organismo Público de Transporte STC Metro, separada por medio de acceso, los cuales son: Tarjeta Única de Movilidad Integrada, boleto y gratuidad, esta última se refiere al acceso gratuito para las personas adultos mayores, personas con discapacidad y/o niños menores de 5 años, de acuerdo a los requisitos establecidos por el Organismo.
+
+```{r message=FALSE, warning=FALSE}
+afluencia <-read_csv('C:/Users/palin/OneDrive/Documentos/MaestriaEnCienciaDeDatos/Semestre3/MétodosNuméricos/FinalAline/Data1/afluenciastc_simple_01_12_2022.csv')
+afluencia %>% head(10)
+```
+Por ejemplo podemos ver el top 5 de las estaciones con mayor afluencia para el día más reciente en la base '2022-10-31', sin considerar la linea:
+```{r}
+afluencia$fecha <- as.Date(afluencia$fecha,format = "%d/%m/%Y")
+afluencia %>% filter(fecha=='2022-10-31') %>%  group_by(estacion) %>% summarise(Afluencias_suma = sum(afluencia)) %>% arrange(desc(Afluencias_suma)) %>% head(5)
+```
+
+Ahora observemos el primer lugar de acuerdo a la linea del metro, por ejemplo Pantitlán que tiene varios cruces de lineas
+
+```{r}
+afluencia %>% filter((fecha=='2022-10-31')&(str_detect(estacion,"Pantitl")))
+```
+Observemos como se comporta la afluencia de una de las estaciones más caóticas de la CDMX
+
+![Pantitlán](Imagenes/Pantitlan.png){height="350" width=60% }
+Indios Verdes es otra de las estaciones con mayor afluencia
+![Indios Verdes](Imagenes/IndiosVerdes.png){height="350" width=60% }
+Observemos que Pantitlán por ejemplo es una de las estaciones que históricamente ha tenido mayor afluencia de personas, también podemos notar que antes de la pandemia, la concentración de personas era mucho mayor, que post-Covid. Esto nos lleva a preguntarnos como integrar esta información en nuestros datos dado que históricamente cada estación tiene una afluencia distinta. Lo más sencillo es cortar nuestra información a partir de mediados 2021 donde la movilidad empieza a estabilizarse debido a que la pandemia comienza su desaceleración, de esta manera podemos tomarnos como valor fijo entre nodos la mediana de los datos, para este rango de fechas, siendo este un mejor estimador que la media.
+
+Sabemos además que las estaciones con mayores transbordos como lo es pantitlán van a presentar mayor afluencia y esta dependerá de la línea en la que viajen, para fines prácticos de este ejercicio, se asumirá pantitlán como un solo nodo sin importar la línea en la que te encuentras.
+
+Supondremos además que la afluencia tiene dirección, es decir si vas en la línea 1 por ejemplo de Pantitlán a Zaragoza, sabemos que la mediana de afluencia en Pantitlán es n, así que la afluencia de Pantitlán a Zaragoza será n, y si la afluencia de Zaragoza es m y su dirección es pantitlán, entonces la afluencia de esa dirección será m.
+
+Este quizá sea uno de los supuestos más grandes al integrar esta matriz al modelo, pues estamos haciendo el supuesto de que la cantidad de personas que se reportan entran a una estación permanecen en la siguiente, cuando sabemos que en la realidad esto no necesariamente es cierto, pues si n personas suben en Pantitlán, tienen muchas opciones para moverse, ya que esa estación tiene 4 transbordos, es decir, 4 líneas contiguas, su siguiente opción puede ser Zaragoza, Agrícola Oriental, Puebla o Hangares, sin embargo, al no contar con este nivel de detalle en bases públicas, abordaremos este problema de la siguiente forma:
+
+1.	Una opción de matriz será bajo el supuesto de que las personas que entran a x estación permanecen en la siguiente.
+
+2.	Dado que cada estación tiene una afluencia diferente, se desarrollará una segunda matriz que contemple tanto las distancias previamente desarrolladas, como la proporción de afluencia de cada estación. Dicha proporción será considera de acuerdo a líneas completas, es decir, si la línea 1 tiene una afluencia total z, entonces cada una de sus estaciones tendrá un peso distinto de acuerdo a su afluencia individual, n/z.
+
+Adicional a lo anterior no estamos considerando horarios, la afluencia es el número de personas totales al día, sin considerar que en horarios 6-9 am o 6-9 pm, son horarios de mucho mayor cocentración de personas por las horas laborales entre semana y varian bastante los fines de semana.
+
+Antes de determinar la mediana general por estación, recordemos que el rango de fechas que estamos considerando es a partir de mediados de 2021, sin embargo, para una estación en particular: línea 12, sufrió un incidente en mayo 2021, dejándola fuera de servicio a partir de ese periodo, podemos observar en el siguiente gráfico como se ve su comportamiento de afluencia histórica. Con fines de no sacarla de nuestro análisis, pues contamos con su matriz de distancias, decidimos tomar un periodo distinto únicamente para esta línea, que contemple el mismo número de periodos (16) y que no se intersecte con la pandemia: mediados de junio 2018 a 2020.
+
+![Linea12](Imagenes/Linea12.png){height="350" width=60% }
+![Tabla medianas](Imagenes/Tabla_medianas.png){height="500" width=40% }
+![Mediana Indios Verdes](Imagenes/IndiosVerdesMediana.png){height="500" width=40% }
+
+![Tabla de Afluencias Finales](Imagenes/AfluenciasTable.png)
 
 ## Implementación del algoritmo 
 
@@ -197,15 +263,29 @@ La figura 2 es sólo una muestra de todos los nodos y pesos definidos, por ejemp
 
 La salida anterior es la base para generar el grafo que será utilizado para poder encontrar la ruta más corta en donde, como ya se mencionó cada estación representa un nodo, existe un vertice dentro de cada uno de ellos siempre que los pesos entre ambos sea positivo. La siguiente figura muestra la red de nodos completa para el metro de la CDMX.
 
-**Agregar figura de la red**
+![Representación del Metro en un Gráfo](Imagenes/Grafo_v1.png){height="350" width=60% }
 
 Una vez definido red se hace uso de la función meniconada al inicio de esta sección. La función recibe como parámetro un grafo, el nombre de una estación del metro que sea el origen y una estación destino tal y como se muestra a continuación:
 
 ![Función dikjstra](Imagenes/dijkstra_function.png){width=60%}
 
-
-
 ## Resultados y conclusiones
+
+Los resultados que se derivan de la implementación del modelo se muestran como en la figura 6, en donde de froma descendente cada entrada indica la siguiente estación que se deberá tomar para llegar a la estación de destino ya sea porque se ha tomado la ruta más corta, la ruta con menor afluencia o la ruta que hemos denonimado la más óptima en tiempo y confort. 
+
+
+![Salida del algoritmo: rtua más corta de Hidalgo a Candelaria](Imagenes/Ejemplo_salida.png){height="150" width=30%}
+
+
+El ejemplo anterior resulta interesante porque implicaría hacer transbordes entre líneas que uno como usuario podría pensar que no son necesarios o que resultan ser más tediosos. Para el ejemplo anterior, la siguiente imagen muestra dentro del mapa de la red del metro marcada en rojo, la ruta sugerida para llegar al destino planteado:
+
+![Ruta sugerida](Imagenes/Ruta_sugerida.png){height="350" width=60% }
+
+
+Note que conseguir ir por la ruta más corta implica hacer un par de transbordes, el primero de la línea azul a la verde en la esación Bellas Artes, el segundo sería en Salto del Agua hacia la línea rosa y de ahí sobre esa misma ruta hasta llegar a Candelaria, sin embargo es probable que resulte ser más conveniente hacer sólo un transborde pues representa una situación más cómoda y se hace menos tiempo en llegar al destino que seguir la ruta más corta. 
+
+Escenarios como este plantean agregar otro tipo de datos como lo es el tiempo promedio de transborde entre estaciones. Como éste caso, puede haber muchas otras situaciones que sin duda enriquecen la solución al problema planteado, pero que para fines de este trabajo han quedado fuera del scope. 
+
 
 
 

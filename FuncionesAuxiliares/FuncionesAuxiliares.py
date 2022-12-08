@@ -78,3 +78,123 @@ def algoritmo_dijkstra(matriz,origen,destino):
     ruta_final = nx.dijkstra_path(G, str(origen), str(destino))
     
     return ruta_final
+
+################################Funciones Grafos###############################################
+
+def adj_matrix_2_edge_list_1(adj_matrix):
+    """
+    Esta función solamente transforma cualquier matriz cuadrada en una 
+    lista de tuplas en el formato "edges list", lo cuál es muy útil
+    para realizar los grafos. 
+    
+    Funciona iterando sobre los indices de la matriz, tomando i y j y 
+    el valor respectivo. Elimina la traza para evitar grafos ciclicos.
+    
+    """
+    edge_list = []
+    matrix_len= len(adj_matrix)
+    for i in range(matrix_len):
+        for j in range(matrix_len):
+                if i==j:
+                    pass
+                else:
+                    edge_list.append((i,j,adj_matrix[i][j]))
+    edge_list = tuple(edge_list) 
+    return edge_list
+
+
+def plot_weighted_graph(matriz_adj):
+    """
+    input: matriz de adj
+    output: grafo con weighted edges
+    Esta es la función que crea el grafo. Toma una matriz de adj,
+    la convierte en una edges list y crea el grafo con cada vertices proporcional 
+    al valor que recibe en la matriz de adj.
+    
+    """
+    edges_list=adj_matrix_2_edge_list_1(matriz_adj)
+    # tamaño de la matriz
+    size=max([row[0] for row in edges_list])+1
+    
+    # Creamos el objeto grafo y le indicamos la cantidad de nodos
+    G = nx.Graph() 
+    node_list = range(size)
+    for node in node_list:
+        G.add_node(node)
+ 
+    # Indicamos que queremos una distribución simétrica y circular de los nodos
+    # esto lo podemos cambiar a cualquier otra presentaciòn estética
+    pos=nx.spring_layout(G)
+    #nx.draw_networkx_nodes(G,pos,node_color='blue',node_size=300)
+    # Graficamos las red
+    # graficamos en un canvass amplio 
+    plt.figure(6,figsize=(16,16)) 
+    nx.draw(
+    G, pos, edge_color='black', width=1, 
+        linewidths=1, node_size=600, node_color='pink', 
+        alpha=0.9,with_labels = True)
+    
+    # Agregamos los datos de los vertices y pesos
+    G.add_weighted_edges_from(edges_list)
+    
+    # Ahora pintamos de manera iterativa cada vertice y su peso
+    # a la par que normalizamos los pesos para que los vertices no nos salgan tan desproporcionados
+    tupla_pesos = []
+    for (node1,node2,data) in G.edges(data=True):
+        tupla_pesos.append(data['weight']) #we'll use this when determining edge thickness
+ 
+    pesos_unicos = list(set(tupla_pesos))
+    for i in pesos_unicos:
+        vertices_con_peso = [(node1,node2) for (node1,node2,edge_attr) in G.edges(data=True) if edge_attr['weight']==i]
+        # normalizamos un poco los pesos para que la anchura sea proporcional a su peso
+        # este *1 lo tenemos que aumentar cuando haya pocos nodos y disminuir cuando 
+        # haya más por cuestiones esteticas
+        anchura = i*len(node_list)*.75/sum(tupla_pesos)
+        nx.draw_networkx_edges(G,pos,edgelist=vertices_con_peso,width=anchura)
+ 
+    plt.axis('off')
+    plt.title('Grafo con vertices proporcionales (valor abs)')
+    plt.show() 
+
+def plot_labeled_graph(matriz_adj):
+    """
+    input: matriz de adj
+    output: grafo con pesos no visibles
+    
+    """
+    edges_list=adj_matrix_2_edge_list_1(matriz_adj)
+    # tamaño de la matriz
+    size=max([row[0] for row in edges_list])+1
+    
+    # Creamos el objeto grafo y le indicamos la cantidad de nodos
+    G = nx.Graph() 
+    node_list = range(size)
+    for node in node_list:
+        G.add_node(node)
+
+
+    # Agregamos la lista de pesos en un diccionario para que sea fácil de interpretar por la función.
+
+    G.add_weighted_edges_from(edges_list)
+    edge_labels = dict([((n1, n2), round(d['weight'], 2))
+                    for n1, n2, d in G.edges(data=True)])
+    # graficamos en un canvass amplio 
+    plt.figure(6,figsize=(16,16)) 
+
+    # Indicamos que queremos una distribución simétrica y circular de los nodos
+    # esto lo podemos cambiar a cualquier otra presentaciòn estética
+    pos=nx.spring_layout(G)
+    #pos = nx.spring_layout(G) #este lo activamos si queremos una gráfica asimétrica
+
+    # Graficamos las red
+
+    nx.draw(
+    G, pos, edge_color='black', width=1, 
+        linewidths=1, node_size=600, node_color='pink', 
+        alpha=0.9,with_labels = True)
+    # Graficamos las labels de los pesos
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels,font_size=10)
+ 
+    plt.axis('off')
+    plt.title('Grafo con etiquetas de pesos')
+    plt.show()
