@@ -30,6 +30,7 @@ library(tidygraph)
 library(ggraph)
 library(readxl)
 library(ggplot2)
+
 ```
 
 
@@ -181,10 +182,11 @@ Así que la ruta seleccionada para ir del nodo 0 al nodo 5 será la primera, mar
 
 Para el ejercicio, se descargó la base de datos de la siguiente liga [liga](https://metro.cdmx.gob.mx/longitud-de-estacion), la cual contiene la relación de las distancias en metros entre las estaciones del metro de la CDMX, detallando la línea a la que pertenecen y mostradas de forma ordenada como se muestra a continuación:
 
-```{r message=FALSE, warning=FALSE}
-distancias <-read_excel('C:/Users/palin/OneDrive/Documentos/MaestriaEnCienciaDeDatos/Semestre3/MétodosNuméricos/FinalAline/Data1/distancia_metro.xlsx')
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+distancias <-read_excel('Data1/distancia_metro.xlsx')
 distancias %>% head(10)
 ```
+
 Para poder generar la matriz de adyacencias, se consideraron como los nodos todas las estaciones (164), y los pesos para cada una el campo "Long_interestacion", que contiene la distancia entre cada estación, esta matriz será simétrica, pues en términos de esta medida es lo mismo ir de Pantitlán a Zaragoza que viceversa. Dado que la matriz es muy grande para ser visualizada, puede consultarse en la carpeta Matrices en el repositorio de GitHub.
 
 En realidad la construcción de esta matriz fue bastante directa y con ella buscamos encontrar la ruta más corta.
@@ -197,26 +199,32 @@ Bajo este enfoque nos interesa agregar la siguiente base tomada de https://datos
 
 La base de afluencia desglosada se refiere a la afluencia en el Organismo Público de Transporte STC Metro, separada por medio de acceso, los cuales son: Tarjeta Única de Movilidad Integrada, boleto y gratuidad, esta última se refiere al acceso gratuito para las personas adultos mayores, personas con discapacidad y/o niños menores de 5 años, de acuerdo a los requisitos establecidos por el Organismo.
 
-```{r message=FALSE, warning=FALSE}
-afluencia <-read_csv('C:/Users/palin/OneDrive/Documentos/MaestriaEnCienciaDeDatos/Semestre3/MétodosNuméricos/FinalAline/Data1/afluenciastc_simple_01_12_2022.csv')
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+afluencia <-read_csv('Data1/afluenciastc_simple_01_12_2022.csv')
 afluencia %>% head(10)
 ```
+
 Por ejemplo podemos ver el top 5 de las estaciones con mayor afluencia para el día más reciente en la base '2022-10-31', sin considerar la linea:
-```{r}
+
+```{r, echo=FALSE}
 afluencia$fecha <- as.Date(afluencia$fecha,format = "%d/%m/%Y")
 afluencia %>% filter(fecha=='2022-10-31') %>%  group_by(estacion) %>% summarise(Afluencias_suma = sum(afluencia)) %>% arrange(desc(Afluencias_suma)) %>% head(5)
 ```
 
 Ahora observemos el primer lugar de acuerdo a la linea del metro, por ejemplo Pantitlán que tiene varios cruces de lineas
 
-```{r}
+```{r, echo=FALSE}
 afluencia %>% filter((fecha=='2022-10-31')&(str_detect(estacion,"Pantitl")))
 ```
+
 Observemos como se comporta la afluencia de una de las estaciones más caóticas de la CDMX
 
 ![Pantitlán](Imagenes/Pantitlan.png){height="350" width=60% }
+
 Indios Verdes es otra de las estaciones con mayor afluencia
+
 ![Indios Verdes](Imagenes/IndiosVerdes.png){height="350" width=60% }
+
 Observemos que Pantitlán por ejemplo es una de las estaciones que históricamente ha tenido mayor afluencia de personas, también podemos notar que antes de la pandemia, la concentración de personas era mucho mayor, que post-Covid. Esto nos lleva a preguntarnos como integrar esta información en nuestros datos dado que históricamente cada estación tiene una afluencia distinta. Lo más sencillo es cortar nuestra información a partir de mediados 2021 donde la movilidad empieza a estabilizarse debido a que la pandemia comienza su desaceleración, de esta manera podemos tomarnos como valor fijo entre nodos la mediana de los datos, para este rango de fechas, siendo este un mejor estimador que la media.
 
 Sabemos además que las estaciones con mayores transbordos como lo es pantitlán van a presentar mayor afluencia y esta dependerá de la línea en la que viajen, para fines prácticos de este ejercicio, se asumirá pantitlán como un solo nodo sin importar la línea en la que te encuentras.
@@ -234,7 +242,9 @@ Adicional a lo anterior no estamos considerando horarios, la afluencia es el nú
 Antes de determinar la mediana general por estación, recordemos que el rango de fechas que estamos considerando es a partir de mediados de 2021, sin embargo, para una estación en particular: línea 12, sufrió un incidente en mayo 2021, dejándola fuera de servicio a partir de ese periodo, podemos observar en el siguiente gráfico como se ve su comportamiento de afluencia histórica. Con fines de no sacarla de nuestro análisis, pues contamos con su matriz de distancias, decidimos tomar un periodo distinto únicamente para esta línea, que contemple el mismo número de periodos (16) y que no se intersecte con la pandemia: mediados de junio 2018 a 2020.
 
 ![Linea12](Imagenes/Linea12.png){height="350" width=60% }
+
 ![Tabla medianas](Imagenes/Tabla_medianas.png){height="500" width=40% }
+
 ![Mediana Indios Verdes](Imagenes/IndiosVerdesMediana.png){height="500" width=40% }
 
 ![Tabla de Afluencias Finales](Imagenes/AfluenciasTable.png)
@@ -259,7 +269,7 @@ Posterior a ello, se arma un arreglo que será el input para armar los nodos y l
 
 ![Nodos y pesos por cada vertice](Imagenes/input_nodos_vertices.png){height="350" width=60% }
 
-La figura 2 es sólo una muestra de todos los nodos y pesos definidos, por ejemplo podemos ver que existe una conección entre el nodo "Pantitlan" y el nodo "Hangares" cuyo peso (distancia en este caso) es de 1644 metros.
+La figura 5 es sólo una muestra de todos los nodos y pesos definidos, por ejemplo podemos ver que existe una conección entre el nodo "Pantitlan" y el nodo "Hangares" cuyo peso (distancia en este caso) es de 1644 metros.
 
 La salida anterior es la base para generar el grafo que será utilizado para poder encontrar la ruta más corta en donde, como ya se mencionó cada estación representa un nodo, existe un vertice dentro de cada uno de ellos siempre que los pesos entre ambos sea positivo. La siguiente figura muestra la red de nodos completa para el metro de la CDMX.
 
@@ -290,6 +300,7 @@ Escenarios como este plantean agregar otro tipo de datos como lo es el tiempo pr
 
 
 
+\newpage
 
 ## Referencias
 
