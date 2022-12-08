@@ -110,7 +110,7 @@ Ahora, revisamos la distancia que existe entre el nodo 0 y sus nodos adyacentes,
 | 5| $\inf$|
 | 6| $\inf$|
 
-Y posterior a ello, seleccionamos el nodo cuya distancia es menor al nodo origen, una vez que lo hemos seleccionado marcamos ese nodo como visitado. Adicional, agregmos un elemento más a la lista, que será la ruta, en este caso esta irá del nodo 0 al 1 tal que: $\{0 -> 1 \}$ y $\{-0,-1,2,3,4,5,6 \}$
+Y posterior a ello, seleccionamos el nodo cuya distancia es menor al nodo origen, una vez que lo hemos seleccionado marcamos ese nodo como visitado. Adicional, agregmos un elemento más a la lista, que será la ruta, en este caso esta irá del nodo 0 al 1 tal que: $\{0 \rightarrow 1 \}$ y $\{-0,-1,2,3,4,5,6 \}$
 
 Ahora necesitamos analizar los nuevos nodos adyacentes para encontrar el camino más corto para llegar a ellos. Solo analizaremos los nodos que son adyacentes a los nodos que ya forman parte del camino más corto. El nodo 3 y el nodo 2 son adyacentes a los nodos que ya están en la ruta porque están conectados directamente al nodo 1 y al nodo 0, respectivamente. Estos son los nodos que analizaremos en el siguiente paso[@noauthor_dijkstras_2020].
 
@@ -126,11 +126,11 @@ Como ya tenemos la distancia desde el nodo de origen hasta el nodo 2 anotada en 
 | 5| $\inf$|
 | 6| $\inf$|
 
-Note que en este caso, la distancia actualizada será 7 pues es el resultado de la suma de 2 y 5 que es la distancia que nos toma llegar del nodo 0 al nodo 3. Ahora, de los nodos aún no visitados y basados en la tabla anterior debemos elegir el que represente la distancia más corta desde el nodo origen, en este caso la distancia más corta será 6 y marcamos este como visitado tal que $\{-0,-1,-2,3,4,5,6 \}$. Ahora tenemos dos rutas que en este caso son: $\{0 -> 1 \} y \{0 -> 2\}$, luego entonces debemos elegir la ruta más corta para llegar al nodo 3. 
+Note que en este caso, la distancia actualizada será 7 pues es el resultado de la suma de 2 y 5 que es la distancia que nos toma llegar del nodo 0 al nodo 3. Ahora, de los nodos aún no visitados y basados en la tabla anterior debemos elegir el que represente la distancia más corta desde el nodo origen, en este caso la distancia más corta será 6 y marcamos este como visitado tal que $\{-0,-1,-2,3,4,5,6 \}$. Ahora tenemos dos rutas que en este caso son: $\{0 \rightarrow \} y \{0 \rightarrow 2\}$, luego entonces debemos elegir la ruta más corta para llegar al nodo 3. 
 
-En nuestra tabla anterior, note que el nodo 3 ya tiene una distancia derivado de los pasos anteriores, pero ahora tenemos una alternativa que será considerar la distancia entre el nodo 2 y 3. Por la figura 2, la suma de estas distancias es de 14, mientras que la distancia ya registrada anteriormete es de 7 como se observa en la tabal, de forma que conservamos la ruta que originalmente habìamos tomado y agregamos el nuevo nodo tal que: $\{0 -> 1 -> 3\}$. Hemos llegado al nodo 3, así que ahora podemos marcarlo como visitado: $\{-0,-1,-2,-3,4,5,6 \}$ 
+En nuestra tabla anterior, note que el nodo 3 ya tiene una distancia derivado de los pasos anteriores, pero ahora tenemos una alternativa que será considerar la distancia entre el nodo 2 y 3. Por la figura 2, la suma de estas distancias es de 14, mientras que la distancia ya registrada anteriormete es de 7 como se observa en la tabal, de forma que conservamos la ruta que originalmente habìamos tomado y agregamos el nuevo nodo tal que: $\{0 \rightarrow 1 \rightarrow 3\}$. Hemos llegado al nodo 3, así que ahora podemos marcarlo como visitado: $\{-0,-1,-2,-3,4,5,6 \}$ 
 
-Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visitados, en este caso para ir al nodo 4 la ruta definida sería $\{0 -> 1 -> 3 -> 4\}$ cuya distancia es 17, mientras que para ir al nodo 5 la ruta es $\{0 -> 1 -> 3 -> 5\}$ y cuya distancia es 22. Actuizamos de nueva cuenta nuestra tabla de distancias:
+Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visitados, en este caso para ir al nodo 4 la ruta definida sería $\{0 -> 1 \rightarrow 3 \rightarrow 4\}$ cuya distancia es 17, mientras que para ir al nodo 5 la ruta es $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$ y cuya distancia es 22. Actuizamos de nueva cuenta nuestra tabla de distancias:
 
 | Nodo| Distancia|
 |:--:|:--:|
@@ -142,11 +142,11 @@ Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visi
 | 5| 22|
 | 6| $\inf$|
 
-Ahora, debemos marcar como visitado aquel nodo que nos haya dado la distancia más corta, que en este caso es el nodo 4: $\{-0,-1,-2,-3,-4,5,6 \}$ y la ruta actualizada será $\{0 -> 1 -> 3 -> 4\}$. Una vez más repetimos los mismos pasos para el nodo 5 y 6.
+Ahora, debemos marcar como visitado aquel nodo que nos haya dado la distancia más corta, que en este caso es el nodo 4: $\{-0,-1,-2,-3,-4,5,6 \}$ y la ruta actualizada será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4\}$. Una vez más repetimos los mismos pasos para el nodo 5 y 6.
 
-Para el nodo 5, la primera opción es seguir la ruta $\{0 -> 1 -> 3 -> 5\}$ que tiene una distancia de 22. La segunda opción será $\{0 -> 1 -> 3 -> 4 -> 5\}$ el cual la distancia será 23 desdde el nodo origen, claramente la primera ruta es la más corta. 
+Para el nodo 5, la primera opción es seguir la ruta $\{0 -> 1 -> 3 -> 5\}$ que tiene una distancia de 22. La segunda opción será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 5\}$ el cual la distancia será 23 desde el nodo origen, claramente la primera ruta es la más corta. 
 
-Para el nodo 6 la ruta disponible es $\{0 -> 1 -> 3 -> 4 -> 6\}$ con una distancia de 19. Ahora marcamos como visitado el nodo con la ruta más corta, que en este caso será el 6: $\{-0,-1,-2,-3,-4,5,-6 \}$. Actualizamos la tabla de distancias:
+Para el nodo 6 la ruta disponible es $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 6\}$ con una distancia de 19. Ahora marcamos como visitado el nodo con la ruta más corta, que en este caso será el 6: $\{-0,-1,-2,-3,-4,5,-6 \}$. Actualizamos la tabla de distancias:
 
 | Nodo| Distancia|
 |:--:|:--:|
@@ -160,9 +160,9 @@ Para el nodo 6 la ruta disponible es $\{0 -> 1 -> 3 -> 4 -> 6\}$ con una distanc
 
 Finalmente, el único nodo no visitado es el nodo 5, veamos como podemos incluirlo en la ruta. Existen 3 rutas posibles para llegar del nodo origen al nodo 5 que son:
 
-1. $\{0 -> 1 -> 3 -> 5\}$ con distancia de 22
-2. $\{0 -> 1 -> 3 -> 4 -> 5\}$ con distancia de 23
-3. $\{0 -> 1 -> 3 -> 4 -> 6 -> 5\}$ con distancia de 25
+1. $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 5\}$ con distancia de 22
+2. $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 5\}$ con distancia de 23
+3. $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4 \rightarrow 6 \rightarrow 5\}$ con distancia de 25
 
 Así que la ruta seleccionada para ir del nodo 0 al nodo 5 será la primera, marcamos este nodo cómo visitado y agregamos esta nueva ruta: $\{-0,-1,-2,-3,-4,-5,-6 \}$, $\{0 -> 1 -> 3 -> 5\}$. Con ello hemos encontrado la ruta más corta desde el nodo origen a cualquier otro nodo dentro de la red. Este mismo principio es el que usaremos para aplicarlo a nuestro porblema, más detalle de ello se puede ver en la sección de implementación del algoritmo. 
 
