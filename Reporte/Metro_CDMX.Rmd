@@ -89,12 +89,12 @@ Inicializamos el algoritmo, la siguiente tabla muestra las distancias iniciales 
 | Nodo| Distancia|
 |:--:|:--:|
 | 0| 0|
-| 1| $\inf$|
-| 2| $\inf$|
-| 3| $\inf$|
-| 4| $\inf$|
-| 5| $\inf$|
-| 6| $\inf$|
+| 1| $\infty$|
+| 2| $\infty$|
+| 3| $\infty$|
+| 4| $\infty$|
+| 5| $\infty$|
+| 6| $\infty$|
 
 Note que la distancia inicial en el nodo 0 consigo mismo será 0, mientras que para el resto las distancias iniciales, dado que estas no se conocen se inicializan con el simbolo $\inf$. Por otro lado definimos la lista de los nodos no visitados: $\{0,1,2,3,4,5,6 \}$. Dado que el nodo origen es el nodo 0, lo marcamos como visitado, para ello usarmos el signo "-" dentro de nuestra lista para dentar que hemos visitado dicho nodo: $\{-0,1,2,3,4,5,6 \}$.
 
@@ -105,10 +105,10 @@ Ahora, revisamos la distancia que existe entre el nodo 0 y sus nodos adyacentes,
 | 0| 0|
 | 1| 2|
 | 2| 6|
-| 3| $\inf$|
-| 4| $\inf$|
-| 5| $\inf$|
-| 6| $\inf$|
+| 3| $\infty$|
+| 4| $\infty$|
+| 5| $\infty$|
+| 6| $\infty$|
 
 Y posterior a ello, seleccionamos el nodo cuya distancia es menor al nodo origen, una vez que lo hemos seleccionado marcamos ese nodo como visitado. Adicional, agregmos un elemento más a la lista, que será la ruta, en este caso esta irá del nodo 0 al 1 tal que: $\{0 \rightarrow 1 \}$ y $\{-0,-1,2,3,4,5,6 \}$
 
@@ -122,9 +122,9 @@ Como ya tenemos la distancia desde el nodo de origen hasta el nodo 2 anotada en 
 | 1| 2|
 | 2| 6|
 | 3| 7|
-| 4| $\inf$|
-| 5| $\inf$|
-| 6| $\inf$|
+| 4| $\infty$|
+| 5| $\infty$|
+| 6| $\infty$|
 
 Note que en este caso, la distancia actualizada será 7 pues es el resultado de la suma de 2 y 5 que es la distancia que nos toma llegar del nodo 0 al nodo 3. Ahora, de los nodos aún no visitados y basados en la tabla anterior debemos elegir el que represente la distancia más corta desde el nodo origen, en este caso la distancia más corta será 6 y marcamos este como visitado tal que $\{-0,-1,-2,3,4,5,6 \}$. Ahora tenemos dos rutas que en este caso son: $\{0 \rightarrow \} y \{0 \rightarrow 2\}$, luego entonces debemos elegir la ruta más corta para llegar al nodo 3. 
 
@@ -140,7 +140,7 @@ Hasta debemos de revisar las distancias que se derivan de ir a los nodos no visi
 | 3| 7|
 | 4| 17|
 | 5| 22|
-| 6| $\inf$|
+| 6| $\infty$|
 
 Ahora, debemos marcar como visitado aquel nodo que nos haya dado la distancia más corta, que en este caso es el nodo 4: $\{-0,-1,-2,-3,-4,5,6 \}$ y la ruta actualizada será $\{0 \rightarrow 1 \rightarrow 3 \rightarrow 4\}$. Una vez más repetimos los mismos pasos para el nodo 5 y 6.
 
