@@ -1,0 +1,120 @@
+---
+title: "DefinicionesA"
+author: "ALPL"
+date: "2022-12-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Los problemas de la ruta más corta de muchas ramas surgen en la práctica como subproblemas en muchos algoritmos de optimización de redes. Desde que el hardware se ha vuelto más poderoso y más algoritmos sofisticados necesitan una subrama de ruta más corta, los algoritmos de ruta más corta eficientes tienen una importancia creciente. Este es el caso de otros problemas de optimización de redes, lo que motiva una amplia investigación computacional de los algoritmos disponibles. Desde finales de la década de 1950 se han desarrollado gran cantidad de algoritmos intuitivos y más de dos mil trabajos científicos han sido publicados. A pesar de esto, no existe un método que supere a todos los demás.
+
+
+El objetivo de esta sección es brindar una descripción general de las técnicas de la ruta más corta, para dar paso a un mejor entendimiento del algoritmo Dijkstra. La mayoría de los algoritmos de optimización pueden verse como una implementación particular de un esquema algorítmico único y general, que es una adaptación del enfoque simplex de red primaria (Gallo y Pallottino (1986)). Todos los algoritmos de ruta más corta son iterativos y se basan esencialmente en el mismo concepto importante: distancia entre etiquetas. Durante la ejecución de cualquier algoritmo, se asocia un valor numérico llamado etiqueta de distancia a cada nodo del grafo.Si la etiqueta de cualquier nodo $i \in V$ es infinita, aún queda por encontrar un camino que una el nodo fuente con $i$; de lo contrario, es la distancia desde la fuente $s$ hasta ese nodo a lo largo de algún camino.
+
+
+Comenzamos esta sección describiendo las condiciones de optimalidad que involucran las etiquetas de distancia, ya que permiten evaluar cuándo un conjunto de etiquetas de distancia son óptimas, en el sentido de que expresan las distancias más cortas desde el nodo de origen dado. Las condiciones de optimalidad son importantes especialmente para una familia de algoritmos de ruta más corta, ya que proporcionan un criterio de terminación, o certificado de optimalidad, que indica cuándo una solución factible al problema de la ruta más corta también es óptima. Las condiciones de optimalidad son importantes especialmente para una familia de algoritmos de ruta más corta, ya que proporcionan un criterio de terminación, o certificado de optimalidad, que indica cuándo una solución factible al problema de la ruta más corta también es óptima.
+
+
+Las condiciones de optimalidad no solo proporcionan un criterio de paro, sino que también brindan sugerencias útiles para resolver problemas de optimización. De hecho, cuando una solución tentativa no satisface las condiciones de optimización, las condiciones a menudo sugieren cómo mejorar para obtener otra solución tentativa, más cercana a la solución óptima, medida por alguna métrica subyacente expresada a través de las etiquetas de distancia asociadas con cada nodo del grafo.
+
+
+En las etapas intermedias de un algoritmo, la etiqueta de distancia asociada con cualquier nodo $i \in V$ es una estimación superior de la distancia más corta de $s$ a $i$ y es la distancia más corta al punto de paro. En este punto las condiciones necesarias y suficientes son desarrolladas para un conjunto de distancias de etiquetas para representar el camino más corto.
+
+
+**Teoremoa 8.1** Para cualquier nodo $i \in V - \{s\}$, Sea $\phi(i)$ la etiqueta de la distancia asociada a $i$ y $\phi(s) = 0$. Entonces ${\phi(i)}_{i\in V}$ representa la distancia del camino más corta si y solo si $$\phi(j) \leq \phi(i) + c(i,j) \quad \forall (i,j) \in E$$
+
+Es fácil probrar que las condiciones mencionadas en el anterior teorema son necesarias para llegar al óptimo. De hecho las etiquetas ${\phi(i)}_{i\in V}$ pueden ser vistas como la longitud de algún camino $P_i$ conectando al nodo origen $s$ a $i$, si $\phi(j) > \phi(i) + c(i,j)$ entonces el camino obtenido extiende a $P_i$ por la arista $(i,j)$ es más corto que $P_j$ cuya longitud es $\phi(j)$
+
+Para probar que las condiciones del teorema anterior son suficientes, consideraremos cualquier conjunto de etiquetas $\phi(i)_{i\in V}$ que satisfacen las condiciones del teorema anterior y sea $P = \{s = j_0,j_1,...j_k=i \}$ cualquier dirección del camino del origen $s$ al nodo $i$ cuya longitud será denotada por $l(P)$, entonces del teoremoa y asumiendo que $\phi(j_0)=0$ se sigue que :
+
+$$ \phi(i) = \phi(j_k) \leq \phi(j_{k-1}) +c(j_{k-1}, j_k)$$
+$$\leq \phi(j_{k-2}) + c(j_{k-2},j_{k-1}) +c(j_{k-1}, j_k)$$
+.
+.
+.
+$$\leq \phi(j_0) + \sum_{m=1}^k c(j_{m-1},j_m)$$
+$$= \sum_{m=1}^k c(j_{m-1},j_m) = l(P)$$
+
+Por lo tanto $\phi(i)$ es un límite inferior de la longitud de cualquier camino dirigido desde $s$ a $i$. Además, puesto que $\phi (i)$ es la longitud de algún camino dirigido de $s$ a $i$, también expresa un
+límite superior en la longitud de ruta más corta. Por lo tanto $\phi(i)$ es la ruta más corta como lo indica el teorema 8.1.
+
+
+La longitud de borde reducida $c_{ij}^d$ de una arista $(i,j)$ con respecto a su etiqueta de distancia $\phi(.)$ se define como:
+$$c_{ij}^d = c(i,j) + \phi(i) - \phi(j)$$
+
+**Teorema 8.2** Las longitudes de borde reducidas satisfacen las siguientes tres propiedades:
+
+1. Para cualquier ciclo dirigido $C$: 
+$$ \sum_{(i,j)\in C} c_{ij}^d = \sum_{(i,j)\in C} c(i,j) $$
+
+2. Para cualquier camino dirigido $P$ de $l$ a $k$ donde $l,k \in V$ entonces:
+ $$ \sum_{(i,j)\in C} c_{ij}^d = \sum_{(i,j)\in C} c(i,j) + \phi(k) - \phi(l)$$
+
+3. Si $\phi(.)$ representa la matriz de distancias de ruta más corta, entonces:
+
+$$c_{ij}^d \geq 0 \quad \forall(i,j)\in E$$
+
+**Corolario 8.1** En la formulación matemática del problema del camino más corto mencionado anteriormente, el negativo de las distancias de ruta más cortas $-\phi(i)_{i\in V}$ define las variables duales óptimas $\{\pi_{i\in V}\}$ y las condiciones del teroremoa 8.1 son equivalentes para requerir que las longitudes reducidas sean no negativas en presencia de una solución óptima. En el presencia de un ciclo negativo, el problema primal es ilimitado y, por lo tanto, el problema dual es inviable.
+
+# El algoritmo genérico de ruta más corta
+
+Un prototipo de algoritmo de ruta más corta para el problema de origen único a todos los destinos, mantiene y ajusta un vector $\{\phi(1), \phi(2), ...., \phi(n)\}$ de etiquetas que pueden ser escalares o $\infty$ y que satisfacen el siguiente teorema:
+
+**Teorema 8.3 ** Sea $\{\phi(1), \phi(2), ...., \phi(n)\}$ escalares que satisafacen $\phi(j)\leq \phi(i)+c(i,j)\quad \forall (i,j)\in E$ y sea P un camino que parte del nodo $i_1$ y termina en el nodo $i_k$. Si $\phi(j) =  \phi(i)+c(i,j)\quad \forall (i,j)\in P$ entonces $P$ es el camino más corto de $i_1$ a $i_k$
+
+Las condiciones (8.2) y (8.3) también se conocen como condiciones de holgura complementaria (CSC) por la conexión del problema del camino más corto con el problema del flujo de costo mínimo.
+
+El algoritmo genérico de la ruta más corta comienza con un vector de etiquetas $\{\phi(i)_{i\in V} \}$ y selecciona sucesivamente los bordes $(i,j)$ que violan la condición (8.3). Para cada arista que no satisface esta condición establece: $\phi(j) =  \phi(i)+c(i,j)$ y se detiene cuando la condición satisface a todas las aristas. Las etiquetas $\phi(i)$ pueden ser intuitivamente vistas como la longitud de algún camino $P_i$ que va del origen $s$ al nodo $i$ por lo tanto si $\phi(j) >  \phi(i)+c(i,j)$, el camino obtenido puede extenderse a $P_i$ para las aristas (i,j) que son más cortas que $P_j$ cuando su longitud es $\phi(j)$. Esto puede ser iterado para encontrar exitosamente el camino óptimo del origen a varios destinos.
+
+Incluso si la violación de los bordes pudiera elegirse arbitrariamente, una forma más eficiente es establecer un orden de selección de nodos de un conjunto Q, llamado lista de candidatos, y verificar la violación de la condición (8.3) para todos sus bordes salientes.
+Supongamos que el nodo fuente es el nodo 1. Entonces, el pseudocódigo del algoritmo de ruta más corta de tipo prototipo se muestra en el siguiente Algoritmo.
+
+\begin{align*}
+\textbf{Procedure} \quad generic_SP \\
+\textbf{begin} \\
+  &Q:={1}; \phi(1):=0; \\
+  &\phi(i):=\infty;\forall i \in V; i \neq 1; \\
+  &\textbf{while} Q \neq \emptyset  \textbf{do} \\
+    &Select\quad from\quad Q\quad a\quad node\quad i: \\
+    &\textbf{foreach} \quad outgoing\quad edge\quad (i,j) \textbf{do} \\
+      &\textbf{if} \phi(j) > \phi(i) + c(i,j) \textbf{then} \\
+        &\phi(j):= \phi(i) + c(i,j); \\
+        &Add \quad j \quad to\quad Q \quad if \quad it \quad does \quad not \quad ready \quad belong \quad to \quad Q; \\
+      &\textbf{end} \\
+    &\textbf{end} \\
+  &\textbf{end} \\
+\textbf{end} \\
+\end{align*}
+
+
+# Implementaciones del algoritmo genérico. 
+
+En la literatura se han propuesto muchas implementaciones diferentes del algoritmo genérico descrito anteriormente. Todos ellos son enfoques iterativos que en cada paso asignan etiquetas de distancia
+(es decir, límites superiores en las distancias de ruta más cortas) a los nodos. Difieren únicamente en el criterio de selección del siguiente nodo a eliminar del conjunto Q y, en consecuencia, en las diferentes clases de problemas de camino más corto que pueden resolver. Tradicionalmente, se dividen en dos grupos:
+
+• Métodos de establecimiento de etiquetas: Los algoritmos pertenecientes a este grupo eliminan de Q el nodo $i$ correspondiente a la etiqueta mínima y designan como óptimo o permanente una etiqueta en cada paso.
+
+En cada iteración, se debe calcular la etiqueta mínima sobre $Q$ y muchas implementaciones de este enfoque difieren en el procedimiento que utilizan para obtener ese valor mínimo. 
+
+Los algoritmos de establecimiento de etiquetas se pueden aplicar para resolver solo los problemas de ruta más corta definidos en gráficos acíclicos con longitudes de borde arbitrarias y problemas de ruta más corta con longitudes de borde no negativas. De hecho, si los datos de entrada no son negativos, se muestra que cada nodo ingresará a $Q$ como máximo una vez y su etiqueta tiene valor permanente la primera vez que se extrae ese nodo de $Q$.
+
+• Métodos de corrección de etiquetas: Los algoritmos de corrección de etiquetas consideran todas las etiquetas como temporales hasta la última iteración, cuando se vuelven permanentes. 
+
+La elección del nodo $i$ a eliminar de $Q$ requiere menos cálculos, pero un nodo $i$ puede estar involucrado más de una vez. Los algoritmos que pertenecen a este grupo se aplican a todas las clases de problemas de ruta más corta, incluidos aquellos con longitudes de borde negativas. En el peor de los casos, la complejidad temporal de los métodos de establecimiento de etiquetas es mejor que la de los métodos de corrección de etiquetas, pero, por otro lado, los métodos de corrección de etiquetas son más generales y ofrecen más flexibilidad algorítmica.
+
+
+
+
+
+
+
+
+
+
+
+
