@@ -45,6 +45,10 @@ Para aplicar el algoritmo se hizo lo siguiente:
 
 Al implementar el algoritmo se observan resultados muy interesantes. En primera instancia se verificaron los resultados y durante la verificación notamos que a veces la ruta más corta, aplicada a la vida real, puede no ser la más adecuada por ejemplo, en cuestión de transbordes entre líneas del metro. Este tipo de situaciones motivan a poder incluir otros factores que motivan a poder plantear un problema que derive en una solución más sofisticada. 
 
+### Evidencia AWS
+
+<img width="1438" alt="Evidencia_AWS" src="https://user-images.githubusercontent.com/48302106/207505577-d976c4ba-cf7d-4c24-8085-39de7541e363.png">
+
 ### Referencias
 
 1. Festa, P. (2006). Shortest path algorithms. In Handbook of optimization in telecommunications (pp. 185–210). Springer.
