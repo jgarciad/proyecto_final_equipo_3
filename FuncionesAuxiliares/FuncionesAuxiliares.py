@@ -6,16 +6,24 @@ import random
 import collections
 import matplotlib.pyplot as plt
 
+# Se ha utilizado documentación tipo docstring para funciones disponible en
+# https://www.programiz.com/python-programming/docstrings
+# https://peps.python.org/pep-0257/
+
+
 def construye_matriz_adyacencias(columnaA,columnaB,pesos,N,nodos,base):
-    """
-    Esta función ayuda a generar las matrices iniciales con la información
-    de las distancias de las estaciones y las alfuencias de cada estación
-    
-    Itera a través de las bases iniciales de información donde se encuentra 
-    la relación entre cada estación y genera una matriz de 164 * 164 que son 
-    el número de estaciones en el sistema de transporte colectivo en CDMX
-    
-    """
+    '''
+    Crea una matriz de adyacencias con base en una lista de aristas
+            Parametros:
+                    columnaA: Nombre en la tabla de la lista de nodos de origen
+                    columnaB: Nombre en la tabla de la lista de destino
+                    pesos: Nombre en la tabla de los pesos de cada arista
+                    N: cantidad de nodos
+                    nodos: Array con el nombre de los nodos
+                    base: panda dataframe con los datos anteriores
+            Regresa:
+                    matriz: array con la matriz de adjacencia
+    '''
     df1=np.zeros((N,N))
     matriz=pd.DataFrame(df1)
     matriz.columns=matriz.index=nodos
@@ -29,17 +37,14 @@ def construye_matriz_adyacencias(columnaA,columnaB,pesos,N,nodos,base):
     return matriz
 
 def adj_matrix_2_edge_list(adj_matrix, index_name):
-    """
-    Esta función solamente transforma cualquier matriz cuadrada en una 
-    lista de tuplas en el formato "edges list", lo cuál es muy útil
-    para realizar los grafos. 
-    
-    Funciona iterando sobre los indices de la matriz, tomando i y j y 
-    el valor respectivo. Elimina la traza para evitar grafos ciclicos.
-    
-    Index_name debe tener el mismo número de columnas que adj_matrix
-    
-    """
+    '''
+    Crea una lista de aristas a partir de una matriz de adyacencia. En esta versión de la funcion Esta función los nodos pares donde el peso es mayor a 0 se conservan, cuando el peso es igual a 0 se quitan para que funcione el algoritmo de Dijstra.
+            Parametros:
+                    adj_matrix: un array con la matriz
+                    index_name: eje con los indices de la matriz
+            Regresa:
+                    matriz: array con la lista de aristas
+    '''
     edge_list = []
     matrix_len= len(adj_matrix)
     for i in range(matrix_len):
@@ -54,16 +59,15 @@ def adj_matrix_2_edge_list(adj_matrix, index_name):
     return edge_list
 
 def algoritmo_dijkstra(matriz,origen,destino):
-    """
-    Esta función calcula la ruta más corta bajo una matriz previamente definida
-    bajo el algoritmo dijkstra
-    
-    Funciona generando un grafo con los nodos de la matriz deseada y los pesos entre
-    cada uno, para finalmente generar un listado de los nodos (en este caso estaciones)
-    por las que el método sugiere ir de acuerdo a los criterios establecidos en la matriz
-    
-    """
-    
+    '''
+    Calcula la ruta más corta entre dos nodos bajo el algoritmo dijkstra
+            Parametros:
+                    matriz: matriz de adyacencia
+                    origen: nodo de origen
+                    destino: nodo de destino
+            Regresa:
+                    ruta_final: un array con cada nodo que compone la ruta más corta en orden
+    ''' 
     matrix = np.asarray(matriz.values)
     nodos = matriz.index
 
@@ -82,15 +86,13 @@ def algoritmo_dijkstra(matriz,origen,destino):
 ################################Funciones Grafos###############################################
 
 def adj_matrix_2_edge_list_1(adj_matrix):
-    """
-    Esta función solamente transforma cualquier matriz cuadrada en una 
-    lista de tuplas en el formato "edges list", lo cuál es muy útil
-    para realizar los grafos. 
-    
-    Funciona iterando sobre los indices de la matriz, tomando i y j y 
-    el valor respectivo. Elimina la traza para evitar grafos ciclicos.
-    
-    """
+    '''
+    Crea una lista de aristas a partir de una matriz de adyacencia. Esta version de la función es para graficar el grafo.
+            Parametros:
+                    adj_matrix: un array con la matriz
+            Regresa:
+                    edge_list: array con la lista de aristas
+    '''
     edge_list = []
     matrix_len= len(adj_matrix)
     for i in range(matrix_len):
@@ -104,14 +106,13 @@ def adj_matrix_2_edge_list_1(adj_matrix):
 
 
 def plot_weighted_graph(matriz_adj):
-    """
-    input: matriz de adj
-    output: grafo con weighted edges
-    Esta es la función que crea el grafo. Toma una matriz de adj,
-    la convierte en una edges list y crea el grafo con cada vertices proporcional 
-    al valor que recibe en la matriz de adj.
-    
-    """
+    '''
+    Toma una matriz de adj y crea el grafo con cada vertice proporcional al peso.
+            Parametros:
+                    adj_matrix: un array con la matriz
+            Regresa:
+                        : grafica el grafo con weighted edges
+    '''
     edges_list=adj_matrix_2_edge_list_1(matriz_adj)
     # tamaño de la matriz
     size=max([row[0] for row in edges_list])+1
@@ -157,11 +158,13 @@ def plot_weighted_graph(matriz_adj):
     plt.show() 
 
 def plot_labeled_graph(matriz_adj):
-    """
-    input: matriz de adj
-    output: grafo con pesos no visibles
-    
-    """
+    '''
+    Toma una matriz de adj y crea el grafo con los pesos en etiquetas y no en el grafo en si.
+            Parametros:
+                    adj_matrix: un array con la matriz
+            Regresa:
+                        : grafica del grafo con weighted edges
+    '''
     edges_list=adj_matrix_2_edge_list_1(matriz_adj)
     # tamaño de la matriz
     size=max([row[0] for row in edges_list])+1
